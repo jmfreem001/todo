@@ -9,12 +9,12 @@ body {
 
 .container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns:  1fr .05fr 1fr;
   grid-template-rows: auto;
   grid-template-areas: 
   "header header header"  
-  "projects main main"
-  "projects main main"
+  "projects . main"
+  "projects . main"
 }
 
 .header{
@@ -29,7 +29,8 @@ body {
   grid-area: main;
 }
 
-
-button{
-  border-radius: 50%;
+.project:hover{
+  /* background-color: #45cc00; */
+  color: blue;
+  cursor: pointer;
 }

@@ -26,9 +26,13 @@ function projects() {
   header.innerText = "Project List";
   projects.appendChild(header);
   let list = document.createElement('ul');
-
+  list.classList.add('project-list')
   projects.appendChild(list);
-  projects.appendChild(newButton('+', 'add-project'))
+  let input =  newTextInput('project', 'new-project-name');
+  projects.appendChild(input);
+
+
+  projects.appendChild(newButton('New Project', 'add-project'))
 
 
   return projects;
@@ -36,10 +40,19 @@ function projects() {
 
 function main(){
   let main = newDiv('main')
-  let header = document.createElement('h2');
-  header.innerText = "Main";
+  let header = document.createElement('h3');
+  header.innerText = "Tasks";
+  let subheading = document.createElement('h4');
+  subheading.innerText = "Testing";
+  subheading.id = 'subheading';
+  let tasks = newDiv('tasks')
+  let list = document.createElement('ul');
+  list.classList.add('task-list')
+  tasks.appendChild(list)
   main.appendChild(header);
-  main.appendChild(newButton('+', 'add-task'))
+  main.appendChild(subheading);
+  main.appendChild(tasks);
+  main.appendChild(newButton('New Task', 'add-task'))
 
   return main;
 }
@@ -59,6 +72,13 @@ function newButton(text, id){
   button.textContent = text;
   button.id = id;
   return button;
+}
+
+function newTextInput(name, id){
+  let item = document.createElement('input');
+  item.name = name;
+  item.id = id;
+  return item;
 }
 
 module.exports = loader
