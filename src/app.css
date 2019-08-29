@@ -34,3 +34,11 @@ body {
   color: blue;
   cursor: pointer;
 }
+
+label{
+  margin-right: 20px;
+}
+
+.adder{
+  border: 50px solid black;
+}

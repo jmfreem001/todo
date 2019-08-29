@@ -28,7 +28,7 @@ function projects() {
   let list = document.createElement('ul');
   list.classList.add('project-list')
   projects.appendChild(list);
-  let input =  newTextInput('project', 'new-project-name');
+  let input =  newInput('project', 'new-project-name');
   projects.appendChild(input);
 
 
@@ -52,11 +52,67 @@ function main(){
   main.appendChild(header);
   main.appendChild(subheading);
   main.appendChild(tasks);
-  main.appendChild(newButton('New Task', 'add-task'))
+
+  main.appendChild(taskAdder())
 
   return main;
 }
 
+function taskAdder(){
+  let adder = newDiv('adder');
+  // Add a subheader.
+  let taskSubheading = document.createElement('h3');
+  taskSubheading.textContent = 'What do you need to do?';
+  adder.appendChild(taskSubheading);
+  newBreak(adder)
+
+  // add text box for title
+  let title = newInput('title', 'task-title')
+  newLabel('Title', 'task-title', adder)
+  adder.appendChild(title)
+
+    // add text for description
+  newBreak(adder)
+  let description = document.createElement('textarea')
+  description.name = description;
+  description.id = 'task-description'
+
+  newLabel('Description', 'task-description', adder)
+  adder.appendChild(description)
+
+  // add date input
+  newBreak(adder)
+  let dueDate = newInput('due', 'due-date');
+  dueDate.type = 'date';
+  newLabel('Due Date', 'due-date', adder)
+  adder.appendChild(dueDate)
+
+  //select box for priority
+  newBreak(adder)
+  newLabel('Priority', 'task-priority', adder)
+  let priority = document.createElement('select');
+  priority.id = 'task-priority';
+  // Create options for drop down. 
+  let low = document.createElement('option');
+  low.value = 'low'
+  low.textContent = "Low"
+  let medium = document.createElement('option');
+  medium.value = 'medium';
+  medium.textContent = 'Medium';
+  medium.selected = true;
+  let high = document.createElement('option');
+  high.value = 'high';
+  high.textContent = 'High';
+
+  priority.appendChild(low)
+  priority.appendChild(medium)
+  priority.appendChild(high)
+
+  adder.appendChild(priority)
+  newBreak(adder)
+  adder.appendChild(newButton('New Task', 'add-task'))
+  return adder;
+}
 
 /* HELPER FUNCTIONS */
 function newDiv(value) {
@@ -74,11 +130,24 @@ function newButton(text, id){
   return button;
 }
 
-function newTextInput(name, id){
+function newInput(name, id){
   let item = document.createElement('input');
   item.name = name;
   item.id = id;
   return item;
+}
+
+function newLabel(text, id, div){
+  //adds a new label for named element and add its it to a div.
+  let label = document.createElement('label');
+  label.for = id;
+  label.textContent = text;
+  div.appendChild(label)
+}
+
+function newBreak(div){
+  let elem = document.createElement('br');
+  div.appendChild(elem);
 }
 
 module.exports = loader
