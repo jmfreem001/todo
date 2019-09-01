@@ -4,76 +4,121 @@ let createProject = require('./projects')
 let loader = require('./loader')
 import './app.css';
 
-/* TODO: 
 
 
-  1. Need to clean up render and loader. 
-    a. for projects
-    b. for tasks. 
-
-
-
-*/
-const Category  = ( () => {
+const controller  = ( () => {
   let list = []
 
   let starter = createProject('General');
   list.push(starter)
-  console.log(list);
   
   starter.addTask(createTask('Bob', 'Bob things','tomorrow','High'));
-  console.log(starter.taskList);
   
   // Set up default Project to store tasks
   let selected = starter
 
+  // Initial render
+  const render = () => {
+    renderProjectList(list)
+    renderTaskList(selected)
+  }
+
+  const addTask = () => {
+    let taskTitle = document.getElementById('task-title');
+    let title = taskTitle.value;
+    let taskDescription = document.getElementById('task-description');
+    let description = taskDescription.value;
+  
+    // Get values from each form element. 
+    let taskDate = document.getElementById('due-date');
+    let dueDate = taskDate.value;
+    let taskPrioriy = document.getElementById('task-priority');
+    let priority = taskPrioriy.value;
+  
+    // Perform form validation
+    let output;
+    // console.log(description.value)
+    if (title === ''){
+      alert('Title is required.')
+      return;
+    } else if (description === ''){
+      alert('Description is required.')
+      return;
+    } else if (dueDate === ''){
+      alert('Due Date is required')
+      return;
+    } else {
+      output = createTask(title, description, dueDate, priority)
+    }
+  
+    selected.taskList.push(output);
+    renderTaskList(selected)
+  }
+
+  const updateSelected = (e) => {
+    // Handles clicks and redirects selected object to the render task list function. 
+    selected = list[e.target.dataset.pid]
+    renderTaskList(selected);
+    // Clear task details. 
+    let details = document.querySelector('.detail')
+    clearChildren(details)
+  }
+
+  const updateActive = (e) => {
+    let choice = e.target.dataset.tid;
+    let active = selected.taskList[choice];
+    // TODO call update to active task display once it is created
+    renderTaskDetail(active)
+  }
+
+  const addProject = () => {
+    // Add Project to the project list
+    let input = document.getElementById('new-project-name');
+    let value = input.value;
+    input.value = "";
+    let newProject = createProject(value);
+    list.push(newProject);
+    renderProjectList(list)
+
+  }
+
   return {
-    list,
-    selected
+    addTask,
+    addProject,
+    updateActive,
+    updateSelected,
+    render
+
   }
 
 })();
 
 loader()
-render()
+controller.render()
 
-
+/* Button listeners */
 let projButton = document.getElementById('add-project');
-projButton.addEventListener('click', addProject);
+projButton.addEventListener('click', controller.addProject);
+
+// Tasks adding listener
+let taskButton = document.getElementById('add-task');
+taskButton.addEventListener('click', controller.addTask);
 
 
-
-function addProject() {
-  // Add Project to the project list
-  let input = document.getElementById('new-project-name');
-
-  let value = input.value;
-  input.value = "";
-  let newProject = createProject(value);
-  Category.list.push(newProject);
-  renderProjectList()
-}
-
-/* TEMPORARY LOCATION OF ELEMENT GENERATORS   */
-
-function render(){
-  renderProjectList()
-  renderTaskList()
-}
 /* Project List functions   */
 
-function renderProjectList() {
+function renderProjectList(catList) {
   // Renders project list. 
   let list = document.querySelector('.project-list');
-  clearChildren(list)
+  clearChildren(list)  
   let count = 0
-  for (let project of Category.list){
+  for (let project of catList){
     // Renders each project listing as a list item. 
     projectListing(project, list, count);
     count++
   }
   let projItems = document.querySelectorAll('.project')
-  projItems.forEach(item => item.addEventListener('click',updateSelected))
+  projItems.forEach(item => item.addEventListener('click', controller.updateSelected))
 }
 
 function projectListing(project, list, count){
@@ -86,57 +131,11 @@ function projectListing(project, list, count){
 }
 
 
+
+
 /* Task List functions   */
 
-// Tasks adding listener
-let taskButton = document.getElementById('add-task');
-taskButton.addEventListener('click', addTask);
-
-function addTask() {
-  let taskTitle = document.getElementById('task-title');
-  let title = taskTitle.value;
-  let taskDescription = document.getElementById('task-description');
-  let description = taskDescription.value;
-
-  // Get values from each form element. 
-  let taskDate = document.getElementById('due-date');
-  let dueDate = taskDate.value;
-  let taskPrioriy = document.getElementById('task-priority');
-  let priority = taskPrioriy.value;
-
-  // Perform form validation
-  let output;
-  // console.log(description.value)
-  if (title === ''){
-    alert('Title is required.')
-    return;
-  } else if (description === ''){
-    alert('Description is required.')
-    return;
-  } else if (dueDate === ''){
-    alert('Due Date is required')
-    return;
-  } else {
-    output = createTask(title, description, dueDate, priority)
-  }
-
-  console.log(output)
-
-  // TODO: Add output to currently selected projects task list and then render tasks
-
-  Category.selected.taskList.push(output);
-  renderTaskList()
-}
-
-
-function updateSelected(e){
-  // Handles clicks and redirects selected object to the render task list function. 
-  let selected = Category.list[e.target.dataset.pid]
-  Category.selected = selected;
-  renderTaskList();
-}
-
-function renderTaskList(selected=Category.selected){
+function renderTaskList(selected){
   // Get the item from the array that aligns with the pid selected. 
   console.log(selected);
   let subheading = document.getElementById('subheading');
@@ -149,16 +148,10 @@ function renderTaskList(selected=Category.selected){
     count++
   }
   let taskItems = document.querySelectorAll('.task')
-  taskItems.forEach(item => item.addEventListener('click',updateActive))
+  taskItems.forEach(item => item.addEventListener('click', controller.updateActive))
 }
 
-function updateActive(e) {
-  let selected = e.target.dataset.tid;
-  let active = Category.selected.taskList[selected];
-  console.log(selected);
-  // TODO call update to active task display once it is created
-  
-}
+
 
 function taskListing(task, list, count){
 
@@ -191,11 +184,39 @@ function taskListing(task, list, count){
   table.appendChild(row);
 }
 
+/* Detail task function */
+function renderTaskDetail(active) {
+  let details = document.querySelector('.detail');
+  clearChildren(details);
+  let heading = document.createElement('h3')
+  heading.textContent = 'Task Detail';
+  details.appendChild(heading)
+  let title = document.createElement('h5');
+  title.textContent = active.title;
+  details.appendChild(title)
+  let desc = newPara(active.description);
+  details.appendChild(desc)
+  let due = newPara(`Due ${active.dueDate}`);
+  details.appendChild(due)
+  let priority = newPara(`${active.priority} priority`);
+  details.appendChild(priority)
+  let complete = newPara(`Task complete ${active.complete}`)
+  details.appendChild(complete)
 
+
+
+}
 
 /* UTILITY FUNCTIONS */
 function clearChildren(el){
   while(el.children.length >0){
     el.removeChild(el.children[0]);
   }
+}
+
+function newPara(text){
+  let item = document.createElement('p');
+  item.textContent = text;
+
+  return item;
 }

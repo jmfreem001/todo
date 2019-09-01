@@ -109,14 +109,14 @@ function taskAdder(){
   priority.id = 'task-priority';
   // Create options for drop down. 
   let low = document.createElement('option');
-  low.value = 'low'
+  low.value = 'Low'
   low.textContent = "Low"
   let medium = document.createElement('option');
-  medium.value = 'medium';
+  medium.value = 'Medium';
   medium.textContent = 'Medium';
   medium.selected = true;
   let high = document.createElement('option');
-  high.value = 'high';
+  high.value = 'High';
   high.textContent = 'High';
 
   priority.appendChild(low)
@@ -131,7 +131,6 @@ function taskAdder(){
 
 function taskDetail() {
 //TODO Add an initially hidden div that shows up when a task is clicked that shows:
-//Need info for : title, description, dueDate, priority etc.
   let detail = newDiv('detail')
 
 
