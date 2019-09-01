@@ -13,8 +13,8 @@ body {
   grid-template-rows: auto;
   grid-template-areas: 
   "header header header"  
-  "projects . main"
-  "projects . main"
+  "projects main detail"
+  "projects main detail"
 }
 
 .header{
@@ -29,9 +29,15 @@ body {
   grid-area: main;
 }
 
+.detail {
+  grid-area: detail;
+}
+
+.project {
+    color: blue;
+}
 .project:hover{
-  /* background-color: #45cc00; */
-  color: blue;
+  font-size: larger;
   cursor: pointer;
 }
 
@@ -41,4 +47,20 @@ label{
 
 .adder{
   border: 50px solid black;
+}
+.task-list {
+  border: 2px solid black;
+  margin: 0px;
+  padding: 0px;
+}
+.task-list td {
+  padding-left: 12px;
+
+}
+.task{
+  color: blue;
+}
+.task:hover {
+  font-size: larger;
+   cursor: pointer;
 }

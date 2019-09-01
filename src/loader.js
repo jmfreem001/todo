@@ -1,4 +1,9 @@
 function loader() {
+
+
+
+
+
   let container = document.createElement('div');
   container.classList = 'container';
   document.body.appendChild(container);
@@ -7,6 +12,7 @@ function loader() {
   container.appendChild(header());
   container.appendChild(projects());
   container.appendChild(main());
+  container.appendChild(taskDetail());
 }
 
 /* MAJOR DIV COMPONENTS*/
@@ -40,23 +46,32 @@ function projects() {
 
 function main(){
   let main = newDiv('main')
+  // Add main header.
   let header = document.createElement('h3');
   header.innerText = "Tasks";
+  // Add subheading of Project Name
   let subheading = document.createElement('h4');
   subheading.innerText = "Testing";
   subheading.id = 'subheading';
   let tasks = newDiv('tasks')
-  let list = document.createElement('ul');
-  list.classList.add('task-list')
-  tasks.appendChild(list)
+
+  // create table;
+  let table = document.createElement('table');
+  table.classList.add('task-list') 
+
+   tasks.appendChild(table)
+
+  // Add components to div.
   main.appendChild(header);
   main.appendChild(subheading);
   main.appendChild(tasks);
-
   main.appendChild(taskAdder())
+
+
 
   return main;
 }
+
 
 function taskAdder(){
   let adder = newDiv('adder');
@@ -71,7 +86,7 @@ function taskAdder(){
   newLabel('Title', 'task-title', adder)
   adder.appendChild(title)
 
-    // add text for description
+  // add text for description
   newBreak(adder)
   let description = document.createElement('textarea')
   description.name = description;
@@ -112,6 +127,15 @@ function taskAdder(){
   newBreak(adder)
   adder.appendChild(newButton('New Task', 'add-task'))
   return adder;
+}
+
+function taskDetail() {
+//TODO Add an initially hidden div that shows up when a task is clicked that shows:
+//Need info for : title, description, dueDate, priority etc.
+  let detail = newDiv('detail')
+
+
+  return detail;
 }
 
 /* HELPER FUNCTIONS */

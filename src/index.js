@@ -34,8 +34,6 @@ const Category  = ( () => {
 
 })();
 
-
-
 loader()
 render()
 
@@ -57,11 +55,6 @@ function addProject() {
 }
 
 /* TEMPORARY LOCATION OF ELEMENT GENERATORS   */
-
-
-
-
-
 
 function render(){
   renderProjectList()
@@ -152,16 +145,50 @@ function renderTaskList(selected=Category.selected){
   clearChildren(list);
   let count = 0;
   for (let task of selected.taskList){
-    //
-    // taskListing(description, list, count)
+    taskListing(task, list, count)
     count++
   }
+  let taskItems = document.querySelectorAll('.task')
+  taskItems.forEach(item => item.addEventListener('click',updateActive))
+}
+
+function updateActive(e) {
+  let selected = e.target.dataset.tid;
+  let active = Category.selected.taskList[selected];
+  console.log(selected);
+  // TODO call update to active task display once it is created
+  
 }
 
 function taskListing(task, list, count){
-  //TODO
 
-  // Need info for : title, description, dueDate, priority
+  let table = document.querySelector('.task-list');
+
+  if (table.children.length === 0) {
+      // Create table headers if they don't exist.
+    let headers = document.createElement('tr');
+    let titleCol = document.createElement('th');
+    titleCol.textContent = 'Task'
+    headers.appendChild(titleCol);
+    let dueCol = document.createElement('th');
+    dueCol.textContent = 'Due';
+    headers.appendChild(dueCol);
+    table.appendChild(headers);
+  }
+
+  // add row of data
+  let row = document.createElement('tr')
+  let item1 = document.createElement('td')
+  item1.textContent = task.title;
+  item1.dataset.tid = count;
+  item1.classList.add('task')
+  row.appendChild(item1);
+  let item2 = document.createElement('td');
+  item2.textContent = task.dueDate;
+  row.appendChild(item2)
+
+  // Append to DOM
+  table.appendChild(row);
 }
 
 
