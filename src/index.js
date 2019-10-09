@@ -5,8 +5,7 @@ let loader = require('./loader')
 import './app.css';
 
 
-
-const controller  = ( () => {
+export const controller  = ( () => {
   let list = []
 
   let starter = createProject('General');
@@ -131,8 +130,6 @@ function projectListing(project, list, count){
 }
 
 
-
-
 /* Task List functions   */
 
 function renderTaskList(selected){
@@ -202,9 +199,6 @@ function renderTaskDetail(active) {
   details.appendChild(priority)
   let complete = newPara(`Task complete ${active.complete}`)
   details.appendChild(complete)
-
-
-
 }
 
 /* UTILITY FUNCTIONS */

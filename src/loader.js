@@ -1,8 +1,7 @@
+/*DOM Manipulation module. */
+
+
 function loader() {
-
-
-
-
 
   let container = document.createElement('div');
   container.classList = 'container';
@@ -66,8 +65,6 @@ function main(){
   main.appendChild(subheading);
   main.appendChild(tasks);
   main.appendChild(taskAdder())
-
-
 
   return main;
 }

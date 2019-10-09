@@ -1,3 +1,10 @@
+
+/**
+ * Factory function to create a task
+ * @param {string} name - Name for the project
+ * @returns {object}
+ */
+
 const createProject = (name) => {
   let taskList = [];
   const changeProjectName = newName => {
