@@ -6,24 +6,24 @@
  */
 
 const createProject = (name) => {
-  let taskList = [];
+  let tasks = [];
   const changeProjectName = newName => {
     name = newName
   }
 
-  const addTask = value => {
-    taskList.push(value)
-  }
+  // const addTask = value => {
+  //   taskList = taskList.concat(value)
+  // }
 
-  const removeTask = value => {
-    let location = taskList.indexOf(value);
-    taskList.splice(location, 1);
-  }
+  // const removeTask = value => {
+  //   let location = taskList.indexOf(value);
+  //   taskList = taskList.filter(location, 1);
+  // }
   return {
     name,
-    addTask,
-    removeTask,
-    taskList,
+    // addTask,
+    // removeTask,
+    tasks,
     changeProjectName
   }
 }

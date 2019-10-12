@@ -1,25 +1,21 @@
 let createTask = require('./tasks.js');
 let createProject = require('./projects')
+import store from './store'
 // import {format} from 'date-fns'
 let loader = require('./loader')
 import './app.css';
 
 
-export const controller  = ( () => {
-  let list = []
-
-  let starter = createProject('General');
-  list.push(starter)
-  
-  starter.addTask(createTask('Bob', 'Bob things','tomorrow','High'));
-  
+const controller  = ( () => {
+  let list = store.getList()
+  console.log(store)
   // Set up default Project to store tasks
-  let selected = starter
+  // let selected = starter
 
   // Initial render
   const render = () => {
     renderProjectList(list)
-    renderTaskList(selected)
+    renderTaskList(store.activeProject)
   }
 
   const addTask = () => {
@@ -75,8 +71,11 @@ export const controller  = ( () => {
     let input = document.getElementById('new-project-name');
     let value = input.value;
     input.value = "";
+    
     let newProject = createProject(value);
-    list.push(newProject);
+    store.addProject(newProject);
+
+    //rerender project list
     renderProjectList(list)
 
   }
@@ -134,7 +133,7 @@ function projectListing(project, list, count){
 
 function renderTaskList(selected){
   // Get the item from the array that aligns with the pid selected. 
-  console.log(selected);
+  // console.log(selected);
   let subheading = document.getElementById('subheading');
   subheading.textContent = selected.name;
   let list = document.querySelector('.task-list');
@@ -214,3 +213,6 @@ function newPara(text){
 
   return item;
 }
+
+
+export default controller
