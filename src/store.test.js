@@ -18,15 +18,23 @@ describe('Store function', ()=> {
         const projectList = store.getList()
         const taskList = projectList[0]['tasks']
         let listLength = taskList.length
-        expect(store.addTask('General', 'Buy trebuchet').length)
+        expect(store.addTask({title:'Buy trebuchet'}).length)
             .toBe(listLength + 1)
+    })
+
+    it('stores currently selected todo', () => {
+
+        store.addTask({title:'Bob'})
+        store.addTask({title:'Lion'})
+        expect(store.updateActiveTask(1).title).toBe('Bob')
+
     })
 
     it('deletes todos', () => {
         const projectList = store.getList()
         const taskList = projectList[0]['tasks']
         let listLength = taskList.length
-        const newLength = store.removeTask('General', 'Buy trebuchet').length
+        const newLength = store.removeTask('Buy trebuchet').length
         expect(newLength).toBe(listLength - 1)
     })
 
@@ -45,7 +53,7 @@ describe('Store function', ()=> {
         expect(store.getList().length).toBe(listLength - 1)
     })
     it('holds the currently selected project', () => {
-        expect(store.activeProject).not.toBeUndefined()
+        expect(store.getActiveProject()).not.toBeUndefined()
     })
     it('updates currently selected project', () => {
         store.addProject({name:'Grocery List'})

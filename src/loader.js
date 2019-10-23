@@ -1,8 +1,6 @@
 /*DOM Manipulation module. */
 
-
 function loader() {
-
   let container = document.createElement('div');
   container.classList = 'container';
   document.body.appendChild(container);
@@ -35,19 +33,18 @@ function projects() {
   projects.appendChild(list);
   let input =  newInput('project', 'new-project-name');
   projects.appendChild(input);
-
-
   projects.appendChild(newButton('New Project', 'add-project'))
-
 
   return projects;
 }
 
 function main(){
   let main = newDiv('main')
+  
   // Add main header.
   let header = document.createElement('h3');
   header.innerText = "Tasks";
+  
   // Add subheading of Project Name
   let subheading = document.createElement('h4');
   subheading.innerText = "Testing";
@@ -57,8 +54,7 @@ function main(){
   // create table;
   let table = document.createElement('table');
   table.classList.add('task-list') 
-
-   tasks.appendChild(table)
+  tasks.appendChild(table)
 
   // Add components to div.
   main.appendChild(header);
@@ -72,6 +68,7 @@ function main(){
 
 function taskAdder(){
   let adder = newDiv('adder');
+  
   // Add a subheader.
   let taskSubheading = document.createElement('h3');
   taskSubheading.textContent = 'What do you need to do?';
@@ -104,6 +101,7 @@ function taskAdder(){
   newLabel('Priority', 'task-priority', adder)
   let priority = document.createElement('select');
   priority.id = 'task-priority';
+  
   // Create options for drop down. 
   let low = document.createElement('option');
   low.value = 'Low'
@@ -123,18 +121,18 @@ function taskAdder(){
   adder.appendChild(priority)
   newBreak(adder)
   adder.appendChild(newButton('New Task', 'add-task'))
+
   return adder;
 }
 
 function taskDetail() {
-//TODO Add an initially hidden div that shows up when a task is clicked that shows:
   let detail = newDiv('detail')
-
 
   return detail;
 }
 
 /* HELPER FUNCTIONS */
+
 function newDiv(value) {
   // helper function for quickly creating new div elements. 
   let div = document.createElement('div');
@@ -147,6 +145,7 @@ function newButton(text, id){
   let button = document.createElement('button')
   button.textContent = text;
   button.id = id;
+
   return button;
 }
 
@@ -154,6 +153,7 @@ function newInput(name, id){
   let item = document.createElement('input');
   item.name = name;
   item.id = id;
+
   return item;
 }
 
@@ -170,5 +170,5 @@ function newBreak(div){
   div.appendChild(elem);
 }
 
-module.exports = loader
+export default loader
 

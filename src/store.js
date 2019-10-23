@@ -1,15 +1,26 @@
 import Project from './projects'
+
 const store = ( () => {
     let list =  [Project('General')]
     let activeProject = list[0]
+    let activeTask = null
 
-    const updateActiveProject = (num) => {
+    const updateActiveProject = num => {
         activeProject = list[num]
+        console.log('In store')
+        console.log(activeProject)
         return activeProject
     }
 
-    //getter for private variable.
+    const updateActiveTask = num => {
+        activeTask = activeProject.tasks[num]
+        return activeTask
+    }
+
+    //getter for private variables.
     const getList = () => list
+    const getActiveProject = () => activeProject
+    const getActiveTask = () => activeTask
 
     const addProject = (item) => {
         list = list.concat(item)
@@ -21,17 +32,15 @@ const store = ( () => {
          return list
     }
 
-    const addTask = (projectName, newTaskString) => {
-        const project = list.find(item => item.name === projectName)
-        project.tasks = project.tasks.concat({name: newTaskString})
-        return project.tasks
+    const addTask = (task) => {
+        activeProject.tasks = activeProject.tasks.concat(task)
+        return activeProject.tasks
     }
  
-    const removeTask = (projectName, taskName) => {
-        const project = list.find(item => item.name === projectName)
-        project.tasks = project.tasks.filter(
-            (task => task.name !== taskName))
-        return project.tasks
+    const removeTask = (taskTitle) => {
+        activeProject.tasks = activeProject.tasks.filter(
+            (task => task.title !== taskTitle))
+        return activeProject.tasks
     }
     return {
         getList,
@@ -39,8 +48,10 @@ const store = ( () => {
         removeProject,
         addTask, 
         removeTask,
-        activeProject,
-        updateActiveProject
+        getActiveProject,
+        getActiveTask,
+        updateActiveProject,
+        updateActiveTask
     }
 })()
 

@@ -30,4 +30,4 @@ const createTask = (title, description, dueDate, priority) => {
   }
 }
 
-module.exports = createTask;
+export default createTask;
