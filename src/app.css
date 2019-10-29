@@ -1,20 +1,51 @@
 div {
-  background-color:#99cc00;
+
   padding:10px;
+
 }
 
 body {
+  background-color:#80e980;
   margin:0;
+  padding:0;
+}
+
+button {
+  align-self: center;
+  background-color: #342e37;
+  color: #fafafa;
+  border-radius: 10%;
+}
+button:hover{
+  background-color:#0d0c0e;
+  /* font-size: larger; */
 }
 
 .container {
   display: grid;
-  grid-template-columns:  1fr .05fr 1fr;
+  grid-template-columns:  1fr 1fr 1fr;
   grid-template-rows: auto;
   grid-template-areas: 
   "header header header"  
-  "projects main detail"
-  "projects main detail"
+  "projects detail adder"
+
+}
+.adder {
+  grid-area: adder;
+  text-align: right;
+  width: 200px;
+  border: 10px solid black;
+  margin-top: 40px;
+}
+.main{
+  margin-top: -20px;
+}
+.adder textarea {
+  max-width:180px;
+}
+
+.adder button {
+  text-align: left;
 }
 
 .header{
@@ -25,12 +56,15 @@ body {
 .projects {
   grid-area: projects;
 }
-.main {
-  grid-area: main;
+
+#subheading{
+  font-size: smaller;
 }
 
 .detail {
   grid-area: detail;
+  border: 2px solid silver;
+  margin: 20px;
 }
 
 .project {
@@ -41,13 +75,6 @@ body {
   cursor: pointer;
 }
 
-label{
-  margin-right: 20px;
-}
-
-.adder{
-  border: 15px solid black;
-}
 .task-list {
   border: 2px solid black;
   margin: 0px;
@@ -63,4 +90,20 @@ label{
 .task:hover {
   font-size: larger;
    cursor: pointer;
+}
+
+.high-priority{
+  background-color: red;
+}
+
+.medium-priority{
+  background-color: yellow;
+}
+
+.low-priority{
+  background-color: green
+}
+
+.completed-task{
+  text-decoration: line-through;
 }

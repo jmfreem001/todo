@@ -1,14 +1,15 @@
 import broker from './broker'
 import createProject from './projects'
 import createTask from './tasks'
-
+import { formatDistance } from 'date-fns'
+import { newDiv, newButton, newInput, newLabel, newBreak, newDynamicInput} from './utils'
 
 const render = ( () => {
   const renderProjectList = (categoryList) => {
       // Renders project list. 
       let list = document.querySelector('.project-list');
       clearChildren(list)  
-      console.log(categoryList)
+      // console.log(categoryList)
       let count = 0
       for (let project of categoryList){
         // Renders each project listing as a list item. 
@@ -111,18 +112,58 @@ const render = ( () => {
 
     // add row of data
     let row = document.createElement('tr')
-    let item1 = document.createElement('td')
-    item1.textContent = task.title;
-    item1.dataset.tid = count;
-    item1.classList.add('task')
-    row.appendChild(item1);
-    let item2 = document.createElement('td');
-    item2.textContent = task.dueDate;
-    row.appendChild(item2)
+    let priority = priorityMarker(task)
+
+    if (task.complete) {
+      row.classList.add('completed-task')
+    }
+
+    // Add
+    let title = document.createElement('td')
+    title.textContent = task.title;
+    title.dataset.tid = count;
+    title.classList.add('task')
+    title.classList.add(priority)
+
+
+    row.appendChild(title);
+    // display task due date
+    let dueDate = document.createElement('td');
+    let due = formatDistance(new Date(task.dueDate), new Date() , {addSuffix:true})
+    dueDate.textContent = `Due ${due}`
+    row.appendChild(dueDate)
+
+    let removeTask = document.createElement('td');
+
+
+    let button = document.createElement('button')
+    button.textContent = 'Delete Task'
+    button.dataset.tid = count;
+    button.onclick = deleteHandler
+    removeTask.appendChild(button)
+    row.appendChild(removeTask)
 
     // Append to DOM
     table.appendChild(row);
   }
+
+  const priorityMarker = task => {
+    if (task.priority === 'Low'){
+      return 'low-priority'
+    } else if (task.priority === 'Medium'){
+      return 'medium-priority'
+    } else if(task.priority === 'High'){
+      return 'high-priority'
+    }
+  }
+
+  const deleteHandler = (e) => {
+    let confirmed = confirm("Are you really, REALLY sure you want to do this? No seriously, it can't be undone.")
+    if (confirmed){
+      let { tid } = e.target.dataset;
+      broker.publish('taskDeleteDomUpdate', tid) 
+    }
+}
 
   const taskIsValid = task => {
     // Perform form validation
@@ -179,15 +220,50 @@ const render = ( () => {
   }
 })();
 
+let tempStore = {}
+let tid = null
 
-// /* Detail task function */
+function updateDetailTaskId(value){
+  tid = value
+  return tid
+}
+broker.subscribe('activeTaskDomUpdate', updateDetailTaskId) 
+
+function handleChange(e){
+  tempStore= {...tempStore, [e.target.name]: e.target.value }
+  
+}
+
+function handleBlur(e){
+  console.log(`Blurred. Temp store completed = ${tempStore.complete}`)
+  console.log(e);
+  broker.publish('updateTask', tempStore)
+  broker.publish('activeTaskDomUpdate', tid)
+}
+
+
+
 function renderTaskDetail(active) {
+
+  //TODO , changes in Mark complete showing updateare not maintaining an update
+  //
+  //
+  tempStore = {...tempStore, ...active}
+  
+  
   let details = document.querySelector('.detail');
+  details.addEventListener('blur', handleBlur, true)
   clearChildren(details);
-  let heading = document.createElement('h3')
+  let heading = document.createElement('h2')
   heading.textContent = 'Task Detail';
   details.appendChild(heading)
-  let title = document.createElement('h5');
+  
+  let inputTitle = newDynamicInput('title', 'active-title', 'text', active.title, handleChange)
+  inputTitle.onblur= "handleBlur()"
+
+  details.appendChild(inputTitle)
+
+  let title = document.createElement('h3');
   title.textContent = active.title;
   details.appendChild(title)
   let desc = newPara(active.description);
@@ -198,10 +274,48 @@ function renderTaskDetail(active) {
   details.appendChild(priority)
   let complete = newPara(`Task complete ${active.complete}`)
   details.appendChild(complete)
+  
+  // Add a toggle button for toggling completion status
+  let completeButton = document.createElement('button')
+  console.log(tempStore.complete);
+  console.log(tempStore.complete? 'Mark Not Complete': 'Mark Complete');
+   
+  completeButton.textContent = (tempStore.complete)? 'Mark Not Complete': 'Mark Complete'
+  completeButton.onclick = toggleComplete
+  details.appendChild(completeButton)
+  // let updateTaskButton = newButton('Save updates', 'update-task')
+  // updateTaskButton.onclick = updateTask
+  // details.appendChild(updateTaskButton)
+  // input for text for title where with activetitle id and custom formatting
+  //  input for text for desc where with activeDesc id and custom formatting
+  // input for date for  with activeDue id and custom formatting
+  // 
+  // let priority = newPara(`${active.priority} priority`); Selector to change priority
+  // 
+  // button to toggle complete status
+  // details.appendChild(complete)
 }
+// function updateTask(){
+//   broker.publish('updateTask', tempStore)
+  
+//   // clog('published')
+//   console.log('Published');
+  
+// }
 
+function toggleComplete(e){
+  console.log(`Before toggle ${tempStore.complete}`);
+  tempStore.complete = !tempStore.complete
+  console.log(`after toggle ${tempStore.complete}`);
+  broker.publish('updateTask', tempStore)
+  broker.publish('activeTaskDomUpdate', tid)
+  // Need to figure out how to send the whole task when this knows nothing about it yet.( may have to implemetn inputs sooner than expected. )
+  
+}
 // Ensure Task Detail is shown when task selected. 
 broker.subscribe('updateActiveTask', renderTaskDetail)
+
+// TODO Add a publish for updated task here/ (should send update task)
 
 /* UTILITY FUNCTIONS */
 function clearChildren(el){

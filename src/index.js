@@ -11,6 +11,23 @@ broker.subscribe('activeProjectDomUpdate', store.updateActiveProject)
 broker.subscribe('projectListDomUpdate', store.addProject)
 broker.subscribe('taskListDomUpdate', store.addTask)
 broker.subscribe('activeTaskDomUpdate', store.updateActiveTask)
+broker.subscribe('taskDelete', store.removeTask)
+
+broker.subscribe('updateTask', store.replaceTask)
+
+const getDeletedTask = (tid) => {
+  console.log('get Delete task called');
+  
+  let project = store.getActiveProject()
+  let task = project.tasks[tid]
+  console.log(`Task name = is ${task.title}`);
+  
+  broker.publish('taskDelete', task.title )
+}
+
+// Get the Id number from the DOM and pass to the store
+broker.subscribe('taskDeleteDomUpdate', getDeletedTask)
+
 
 //Publish updated list when dom Clicked
 const publishProjectList = () => {
@@ -21,6 +38,8 @@ const publishProjectList = () => {
 // Listen for dom update and route for re-rendering
 broker.subscribe('projectListDomUpdate', publishProjectList)
 
+// listen for taskList update and rebublish project list to ensure local storage up to date. 
+broker.subscribe('updateTaskList', publishProjectList)
 
 // Publish updated task list when dom updated
 const publishTaskList = () => {
@@ -28,9 +47,11 @@ const publishTaskList = () => {
   broker.publish('updateTaskList', activeProject)
 }
 
-//Listen for added projects or updated active Project and route for re-rendering
+//Listen for added projects, updated active Project, or deleted task and route for re-rendering
 broker.subscribe('taskListDomUpdate', publishTaskList)
 broker.subscribe('updateActiveProject', publishTaskList)
+broker.subscribe('taskDelete', publishTaskList)
+broker.subscribe('updateTask', publishTaskList)
 
 // publishing active Project Data
 const updateSelected = () => {
@@ -47,6 +68,7 @@ const updateActive = (e) => {
 
 // Listen for dom update and route for re-rendering
 broker.subscribe('activeTaskDomUpdate', updateActive)
+broker.subscribe('updateTask', updateActive)
 
 const controller  = ( () => {
   // Initial render
@@ -55,6 +77,7 @@ const controller  = ( () => {
     broker.publish('updateTaskList', store.getActiveProject())
   }
 
+  // window.localStorage.clear()
   return {
     render
   }
@@ -70,3 +93,10 @@ projButton.addEventListener('click', render.domAddProject);
 // Tasks adding listener
 let taskButton = document.getElementById('add-task');
 taskButton.addEventListener('click', render.domAddTask);
+
+const updateLocalStore = (list) =>{
+  
+  window.localStorage.setItem('general', JSON.stringify(list))
+} 
+broker.subscribe('updateProjectList', updateLocalStore)
+// broker.subscribe('updateTaskList', updateLocalStore)

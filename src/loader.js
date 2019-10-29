@@ -1,3 +1,5 @@
+import { newDiv, newButton, newInput, newLabel, newBreak } from './utils'
+
 /*DOM Manipulation module. */
 
 function loader() {
@@ -8,7 +10,8 @@ function loader() {
   // Add div components to initial load
   container.appendChild(header());
   container.appendChild(projects());
-  container.appendChild(main());
+  // container.appendChild(main());
+  container.appendChild(taskAdder())
   container.appendChild(taskDetail());
 }
 
@@ -26,29 +29,34 @@ function header() {
 function projects() {
   let projects = newDiv('projects');
   let header = document.createElement('h3');
-  header.innerText = "Project List";
+  header.innerText = "Categories";
   projects.appendChild(header);
   let list = document.createElement('ul');
   list.classList.add('project-list')
   projects.appendChild(list);
   let input =  newInput('project', 'new-project-name');
+  projects.appendChild(tasks());
   projects.appendChild(input);
-  projects.appendChild(newButton('New Project', 'add-project'))
+  projects.appendChild(newButton('New Category', 'add-project'))
 
   return projects;
 }
 
-function main(){
+function tasks(){
   let main = newDiv('main')
   
   // Add main header.
-  let header = document.createElement('h3');
-  header.innerText = "Tasks";
-  
+  let taskHeader = document.createElement('h4')
+
+  // let header = document.createElement('h4');
+  taskHeader.innerText = "Selected Category: ";
+  // taskHeader.appendChild(header);
+
   // Add subheading of Project Name
-  let subheading = document.createElement('h4');
+  let subheading = document.createElement('span');
   subheading.innerText = "Testing";
   subheading.id = 'subheading';
+  taskHeader.appendChild(subheading);
   let tasks = newDiv('tasks')
 
   // create table;
@@ -57,10 +65,10 @@ function main(){
   tasks.appendChild(table)
 
   // Add components to div.
-  main.appendChild(header);
-  main.appendChild(subheading);
+  main.appendChild(taskHeader);
+  // main.appendChild(subheading);
   main.appendChild(tasks);
-  main.appendChild(taskAdder())
+  // main.appendChild(taskAdder())
 
   return main;
 }
@@ -70,9 +78,16 @@ function taskAdder(){
   let adder = newDiv('adder');
   
   // Add a subheader.
-  let taskSubheading = document.createElement('h3');
-  taskSubheading.textContent = 'What do you need to do?';
+  let taskSubheading = document.createElement('h2');
+  taskSubheading.textContent = 'Add a Task';
+  
+  let taskTag = document.createElement('p');
+  let emphasizedTag = document.createElement('em')
+  emphasizedTag.textContent = 'What do you need to do?';
+  taskTag.appendChild(emphasizedTag)
+  
   adder.appendChild(taskSubheading);
+  adder.appendChild(taskTag)
   newBreak(adder)
 
   // add text box for title
@@ -120,7 +135,7 @@ function taskAdder(){
 
   adder.appendChild(priority)
   newBreak(adder)
-  adder.appendChild(newButton('New Task', 'add-task'))
+  adder.appendChild(newButton('Submit', 'add-task'))
 
   return adder;
 }
@@ -131,44 +146,6 @@ function taskDetail() {
   return detail;
 }
 
-/* HELPER FUNCTIONS */
-
-function newDiv(value) {
-  // helper function for quickly creating new div elements. 
-  let div = document.createElement('div');
-  div.classList = value;
-
-  return div;
-}
-
-function newButton(text, id){
-  let button = document.createElement('button')
-  button.textContent = text;
-  button.id = id;
-
-  return button;
-}
-
-function newInput(name, id){
-  let item = document.createElement('input');
-  item.name = name;
-  item.id = id;
-
-  return item;
-}
-
-function newLabel(text, id, div){
-  //adds a new label for named element and add its it to a div.
-  let label = document.createElement('label');
-  label.for = id;
-  label.textContent = text;
-  div.appendChild(label)
-}
-
-function newBreak(div){
-  let elem = document.createElement('br');
-  div.appendChild(elem);
-}
 
 export default loader
 

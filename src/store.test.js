@@ -24,10 +24,18 @@ describe('Store function', ()=> {
 
     it('stores currently selected todo', () => {
 
-        store.addTask({title:'Bob'})
-        store.addTask({title:'Lion'})
+        store.addTask({title:'Bob', complete: false})
+        store.addTask({title:'Lion', complete: false})
         expect(store.updateActiveTask(1).title).toBe('Bob')
 
+    })
+
+    it('updates currently selected todo', () => {
+        let listLength = store.getActiveProject().tasks.length
+        store.replaceTask({title: 'Bob', complete: true})
+        expect(store.updateActiveTask(1).complete).toBe(true)
+        //listLength should not change
+        expect(store.getActiveProject().tasks.length).toBe(listLength)
     })
 
     it('deletes todos', () => {
