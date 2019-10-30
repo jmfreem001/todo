@@ -37,7 +37,7 @@ export function newDiv(value) {
     div.appendChild(elem);
   }
 
-  export function newDynamicInput(text, id, type, value, changeHandler){
+  export function newDynamicInput(text, id, type, value, changeHandler, disabled=false){
     let div = newDiv('dynamic-input')
     let item = document.createElement('input');
     item.name = text;
@@ -45,12 +45,13 @@ export function newDiv(value) {
     item.type = type;
     item.value = value
     item.oninput = changeHandler
+    item.disabled = disabled
     div.appendChild(item)
 
-    let label = document.createElement('label');
-    label.for = id;
-    label.textContent = text;
-    div.appendChild(label)
+    // let label = document.createElement('label');
+    // label.for = id;
+    // label.textContent = text;
+    // div.appendChild(label)
 
     return div
 

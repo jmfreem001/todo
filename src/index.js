@@ -5,10 +5,12 @@ import render from './render'
 import loader from './loader'
 import './app.css';
 
+
 /* SUBSCRIPTIONS */
 // Listen for DOM updates
 broker.subscribe('activeProjectDomUpdate', store.updateActiveProject)
-broker.subscribe('projectListDomUpdate', store.addProject)
+broker.subscribe('projectListDomVerified', store.addProject)
+broker.subscribe('projectDelete', store.removeProject)
 broker.subscribe('taskListDomUpdate', store.addTask)
 broker.subscribe('activeTaskDomUpdate', store.updateActiveTask)
 broker.subscribe('taskDelete', store.removeTask)
@@ -36,7 +38,25 @@ const publishProjectList = () => {
 }
 
 // Listen for dom update and route for re-rendering
-broker.subscribe('projectListDomUpdate', publishProjectList)
+broker.subscribe('projectListDomVerified', publishProjectList)
+broker.subscribe('projectDelete', publishProjectList)
+
+
+//Verify submitted project is valid/
+const verifyProject = (project) => {
+  // Ensure Project name is unique. 
+        console.log('Verifying');
+        
+  if (store.getList().filter(proj => proj.name === project.name).length > 0){
+      alert('Project Name already taken, please enter a different name')
+      return 
+  }
+  broker.publish('projectListDomVerified', project)
+}
+broker.subscribe('projectListDomUpdate', verifyProject)
+
+
+
 
 // listen for taskList update and rebublish project list to ensure local storage up to date. 
 broker.subscribe('updateTaskList', publishProjectList)

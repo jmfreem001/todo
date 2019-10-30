@@ -6,14 +6,14 @@ import { newDiv, newButton, newInput, newLabel, newBreak, newDynamicInput} from 
 
 const render = ( () => {
   const renderProjectList = (categoryList) => {
-      // Renders project list. 
-      let list = document.querySelector('.project-list');
-      clearChildren(list)  
+      //table
+      let table = document.querySelector('.project-list');
+      clearChildren(table)  
       // console.log(categoryList)
       let count = 0
       for (let project of categoryList){
         // Renders each project listing as a list item. 
-        projectListing(project, list, count);
+        projectListing(project, table, count);
         count++
       }
       let projItems = document.querySelectorAll('.project')
@@ -23,15 +23,35 @@ const render = ( () => {
   // Ensure Project List is re-rendered on changes. 
   broker.subscribe('updateProjectList', renderProjectList)
     
-  const projectListing = (project, list, count) => {
-      // Component for rendering project elements. 
-      let item = document.createElement('li');
+  const projectListing = (project, table, count) => {
+          // Component for rendering project elements. 
+       let row = document.createElement('tr')
+
+      let item = document.createElement('td');
       item.textContent = project.name;
       item.dataset.pid = count;
       item.classList.add('project')
-      list.appendChild(item);
+      row.appendChild(item)
+
+      let item2 = document.createElement('td');
+      let button = newButton('Remove', 'remove-project')
+      button.dataset.name = project.name;
+      button.onclick = removeCategory
+      item2.appendChild(button)
+      row.appendChild(item2)
+      
+
+      table.appendChild(row);
   }
-  
+
+  const removeCategory = (e )=>{
+    // console.log(e.target.dataset.name);
+    const confirmed =confirm('Are you sure you want to remove? This will remove all associated tasks as well.')
+    if (confirmed){
+      broker.publish('projectDelete', e.target.dataset.name)
+    }
+  }
+
   // publishes selected object id to for eventual use in task list function.
   const getSelected = (e) => 
     broker.publish('activeProjectDomUpdate', e.target.dataset.pid)
@@ -50,14 +70,12 @@ const render = ( () => {
   // Add Project to the project list
   
       let newProject = createProject(getNewProject());
-      // Ensure Project name is unique. 
-        
-    //   if (store.getList().filter(proj => proj.name === newProject.name).length > 0){
-    //       alert('Project Name already taken, please enter a different name')
-    //       return 
-    //   }
 
-      broker.publish('projectListDomUpdate', newProject)
+      if (newProject.name !== ''){
+        broker.publish('projectListDomUpdate', newProject)
+        console.log('Published new Project');
+        
+      } else alert('Catgory must have a name')
   }
     
   const getNewProject = () => {
@@ -77,7 +95,6 @@ const render = ( () => {
   const renderTaskList = (selected) => {
     // Get the item from the array that aligns with the pid selected. 
     console.log('In render')
-    console.log(selected);
     let subheading = document.getElementById('subheading');
     subheading.textContent = selected.name;
     let list = document.querySelector('.task-list');
@@ -245,9 +262,7 @@ function handleBlur(e){
 
 function renderTaskDetail(active) {
 
-  //TODO , changes in Mark complete showing updateare not maintaining an update
-  //
-  //
+
   tempStore = {...tempStore, ...active}
   
   
@@ -262,6 +277,22 @@ function renderTaskDetail(active) {
   inputTitle.onblur= "handleBlur()"
 
   details.appendChild(inputTitle)
+  console.log(active);
+  
+  let inputDesc = newDynamicInput('description', 'active-description', 'text', active.description, handleChange)
+  inputDesc.onblur= "handleBlur()"
+
+  details.appendChild(inputDesc)
+
+  let inputDueDate = newDynamicInput('dueDate', 'active-due-date', 'date', active.dueDate, handleChange)
+  inputDueDate.onblur= "handleBlur()"
+  details.appendChild(inputDueDate)
+
+  let inputPriority = newDynamicInput('priority', 'active-priority', 'priority', active.priority, handleChange, true)
+  inputPriority.onblur= "handleBlur()"
+  inputPriority.disabled = true
+  details.appendChild(inputPriority)
+
 
   let title = document.createElement('h3');
   title.textContent = active.title;
@@ -272,13 +303,12 @@ function renderTaskDetail(active) {
   details.appendChild(due)
   let priority = newPara(`${active.priority} priority`);
   details.appendChild(priority)
-  let complete = newPara(`Task complete ${active.complete}`)
-  details.appendChild(complete)
+  // let complete = newPara(`Task complete ${active.complete}`)
+  // details.appendChild(complete)
   
   // Add a toggle button for toggling completion status
   let completeButton = document.createElement('button')
-  console.log(tempStore.complete);
-  console.log(tempStore.complete? 'Mark Not Complete': 'Mark Complete');
+
    
   completeButton.textContent = (tempStore.complete)? 'Mark Not Complete': 'Mark Complete'
   completeButton.onclick = toggleComplete
@@ -315,7 +345,6 @@ function toggleComplete(e){
 // Ensure Task Detail is shown when task selected. 
 broker.subscribe('updateActiveTask', renderTaskDetail)
 
-// TODO Add a publish for updated task here/ (should send update task)
 
 /* UTILITY FUNCTIONS */
 function clearChildren(el){

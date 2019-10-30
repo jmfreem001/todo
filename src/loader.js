@@ -79,7 +79,7 @@ function taskAdder(){
   
   // Add a subheader.
   let taskSubheading = document.createElement('h2');
-  taskSubheading.textContent = 'Add a Task';
+  taskSubheading.textContent = 'Add New Task';
   
   let taskTag = document.createElement('p');
   let emphasizedTag = document.createElement('em')
