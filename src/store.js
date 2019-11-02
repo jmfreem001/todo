@@ -2,14 +2,11 @@ import Project from './projects'
 
 const store = ( () => {
     let list = JSON.parse(window.localStorage.getItem('general')) || [Project('General')]
-    // [] 
     let activeProject = list[0]
     let activeTask = null
 
     const updateActiveProject = num => {
         activeProject = list[num]
-        console.log('In store')
-        console.log(activeProject)
         return activeProject
     }
 
@@ -39,7 +36,6 @@ const store = ( () => {
     }
  
     const removeTask = (taskTitle) => {
-        console.log(taskTitle);
         
         activeProject.tasks = activeProject.tasks.filter(
             (task => task.title !== taskTitle))
@@ -47,8 +43,6 @@ const store = ( () => {
     }
 
     const replaceTask = (newTask) => {
-
-        console.log('replace in store')
         let locIndex= activeProject.tasks.indexOf(activeTask)
           
         activeProject.tasks = activeProject.tasks

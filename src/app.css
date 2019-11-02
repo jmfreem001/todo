@@ -130,3 +130,28 @@ button:hover{
   background-color:#80e980;
   border: 1px solid #80e980;
 }
+
+.arrows{
+  /* padding:20px; */
+  margin-left: 10px;
+  /* margin-top: -5px; */
+}
+.arrows span{
+  margin-right:10px;
+  border: 1px solid black;
+  padding: 8px;
+  color: white;
+  background-color: #342e37;
+}
+
+.arrows span:hover{
+  background-color:#0d0c0e;
+  cursor: pointer;
+}
+/* #up-arrow{
+
+} */
+
+/* #down-arrow{
+  border: 1px solid black;
+} */

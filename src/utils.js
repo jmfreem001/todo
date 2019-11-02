@@ -48,11 +48,13 @@ export function newDiv(value) {
     item.disabled = disabled
     div.appendChild(item)
 
-    // let label = document.createElement('label');
-    // label.for = id;
-    // label.textContent = text;
-    // div.appendChild(label)
-
     return div
 
   }
+
+  /* UTILITY FUNCTIONS */
+export function clearChildren(el){
+  while(el.children.length >0){
+    el.removeChild(el.children[0]);
+  }
+}

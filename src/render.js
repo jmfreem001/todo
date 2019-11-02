@@ -2,14 +2,13 @@ import broker from './broker'
 import createProject from './projects'
 import createTask from './tasks'
 import { formatDistance } from 'date-fns'
-import { newDiv, newButton, newInput, newLabel, newBreak, newDynamicInput} from './utils'
+import { clearChildren,  newButton, newBreak, newDynamicInput} from './utils'
 
 const render = ( () => {
   const renderProjectList = (categoryList) => {
       //table
       let table = document.querySelector('.project-list');
       clearChildren(table)  
-      // console.log(categoryList)
       let count = 0
       for (let project of categoryList){
         // Renders each project listing as a list item. 
@@ -45,7 +44,6 @@ const render = ( () => {
   }
 
   const removeCategory = (e )=>{
-    // console.log(e.target.dataset.name);
     const confirmed =confirm('Are you sure you want to remove? This will remove all associated tasks as well.')
     if (confirmed){
       broker.publish('projectDelete', e.target.dataset.name)
@@ -73,7 +71,6 @@ const render = ( () => {
 
       if (newProject.name !== ''){
         broker.publish('projectListDomUpdate', newProject)
-        console.log('Published new Project');
         
       } else alert('Catgory must have a name')
   }
@@ -94,7 +91,6 @@ const render = ( () => {
   
   const renderTaskList = (selected) => {
     // Get the item from the array that aligns with the pid selected. 
-    console.log('In render')
     let subheading = document.getElementById('subheading');
     subheading.textContent = selected.name;
     let list = document.querySelector('.task-list');
@@ -237,6 +233,8 @@ const render = ( () => {
   }
 })();
 
+// TODO Move Task Details to its own module. 
+
 let tempStore = {}
 let tid = null
 
@@ -252,12 +250,10 @@ function handleChange(e){
 }
 
 function handleBlur(e){
-  console.log(`Blurred. Temp store completed = ${tempStore.complete}`)
-  console.log(e);
+
   broker.publish('updateTask', tempStore)
   broker.publish('activeTaskDomUpdate', tid)
 }
-
 
 
 function renderTaskDetail(active) {
@@ -272,12 +268,19 @@ function renderTaskDetail(active) {
   let heading = document.createElement('h2')
   heading.textContent = 'Task Detail';
   details.appendChild(heading)
+
+  let subheading = document.createElement('p');
+  let emphasizedHeading = document.createElement('em')
+  emphasizedHeading.textContent = 'Review and update your todo.';
+  subheading.appendChild(emphasizedHeading)
+
+  details.appendChild(subheading)
   
   let inputTitle = newDynamicInput('title', 'active-title', 'text', active.title, handleChange)
   inputTitle.onblur= "handleBlur()"
 
   details.appendChild(inputTitle)
-  console.log(active);
+
   
   let inputDesc = newDynamicInput('description', 'active-description', 'text', active.description, handleChange)
   inputDesc.onblur= "handleBlur()"
@@ -288,76 +291,81 @@ function renderTaskDetail(active) {
   inputDueDate.onblur= "handleBlur()"
   details.appendChild(inputDueDate)
 
-  let inputPriority = newDynamicInput('priority', 'active-priority', 'priority', active.priority, handleChange, true)
-  inputPriority.onblur= "handleBlur()"
-  inputPriority.disabled = true
-  details.appendChild(inputPriority)
+  newBreak(details)
 
+  let changesButton = newButton('Click after Change')
+  details.appendChild(changesButton)
 
-  let title = document.createElement('h3');
-  title.textContent = active.title;
-  details.appendChild(title)
-  let desc = newPara(active.description);
-  details.appendChild(desc)
-  let due = newPara(`Due ${active.dueDate}`);
-  details.appendChild(due)
-  let priority = newPara(`${active.priority} priority`);
-  details.appendChild(priority)
-  // let complete = newPara(`Task complete ${active.complete}`)
-  // details.appendChild(complete)
+  newBreak(details)
+
+  let priorityText = document.createElement('p')
+  priorityText.textContent = `Adjust Priority (${active.priority}): `
+
+  details.appendChild(priorityText)
+
+  let arrows = document.createElement('p');
+  arrows.classList.add('arrows')
   
-  // Add a toggle button for toggling completion status
-  let completeButton = document.createElement('button')
+  let upArrow = document.createElement('span');
+  upArrow.id = 'up-arrow'
+  upArrow.textContent = '↑'
+  upArrow.onclick = priorityHandler
+  arrows.appendChild(upArrow)
+  details.appendChild(arrows)
 
-   
-  completeButton.textContent = (tempStore.complete)? 'Mark Not Complete': 'Mark Complete'
+  let downArrow = document.createElement('span');
+  downArrow.id = 'down-arrow'
+  downArrow.textContent = '↓'
+  downArrow.onclick = priorityHandler
+  arrows.appendChild(downArrow)
+  details.appendChild(arrows)
+
+  newBreak(details)
+
+  let completeButton = document.createElement('button')
+  completeButton.textContent = (tempStore.complete)? 'Mark Incomplete': 'Mark Complete'
   completeButton.onclick = toggleComplete
   details.appendChild(completeButton)
-  // let updateTaskButton = newButton('Save updates', 'update-task')
-  // updateTaskButton.onclick = updateTask
-  // details.appendChild(updateTaskButton)
-  // input for text for title where with activetitle id and custom formatting
-  //  input for text for desc where with activeDesc id and custom formatting
-  // input for date for  with activeDue id and custom formatting
-  // 
-  // let priority = newPara(`${active.priority} priority`); Selector to change priority
-  // 
-  // button to toggle complete status
-  // details.appendChild(complete)
 }
-// function updateTask(){
-//   broker.publish('updateTask', tempStore)
-  
-//   // clog('published')
-//   console.log('Published');
-  
-// }
 
-function toggleComplete(e){
-  console.log(`Before toggle ${tempStore.complete}`);
-  tempStore.complete = !tempStore.complete
-  console.log(`after toggle ${tempStore.complete}`);
+
+function priorityHandler(e){
+  let direction = '' 
+  if (e.target.id === 'up-arrow') direction = 'up'
+  else direction = 'down'
+  changePriority(direction)
+}
+function changePriority(direction){
+  let priorities = ['Low', 'Medium', 'High']
+
+  let start = priorities.indexOf(tempStore.priority)
+  let index = start;
+
+  if (direction === 'up' && start < (priorities.length - 1)){  
+    index++
+  }else if (direction === 'down' && start > 0){
+    index--
+  } else {
+    alert(`Priority can not be ${(direction==='up')? 'raised':'lowered'} any further.`)
+    return
+  } 
+  tempStore.priority = priorities[index]
+
   broker.publish('updateTask', tempStore)
   broker.publish('activeTaskDomUpdate', tid)
-  // Need to figure out how to send the whole task when this knows nothing about it yet.( may have to implemetn inputs sooner than expected. )
+}
+
+function toggleComplete(e){
+  // Toggles complete/Incomplete
+  tempStore.complete = !tempStore.complete
+  broker.publish('updateTask', tempStore)
+  broker.publish('activeTaskDomUpdate', tid)
   
 }
 // Ensure Task Detail is shown when task selected. 
 broker.subscribe('updateActiveTask', renderTaskDetail)
 
 
-/* UTILITY FUNCTIONS */
-function clearChildren(el){
-  while(el.children.length >0){
-    el.removeChild(el.children[0]);
-  }
-}
 
-function newPara(text){
-  let item = document.createElement('p');
-  item.textContent = text;
-
-  return item;
-}
 
 export default render

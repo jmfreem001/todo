@@ -17,12 +17,9 @@ broker.subscribe('taskDelete', store.removeTask)
 
 broker.subscribe('updateTask', store.replaceTask)
 
-const getDeletedTask = (tid) => {
-  console.log('get Delete task called');
-  
+const getDeletedTask = (tid) => { 
   let project = store.getActiveProject()
   let task = project.tasks[tid]
-  console.log(`Task name = is ${task.title}`);
   
   broker.publish('taskDelete', task.title )
 }
@@ -44,9 +41,7 @@ broker.subscribe('projectDelete', publishProjectList)
 
 //Verify submitted project is valid/
 const verifyProject = (project) => {
-  // Ensure Project name is unique. 
-        console.log('Verifying');
-        
+  // Ensure Project name is unique.        
   if (store.getList().filter(proj => proj.name === project.name).length > 0){
       alert('Project Name already taken, please enter a different name')
       return 
