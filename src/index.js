@@ -1,7 +1,7 @@
 import broker from './broker'
 import store from './store'
 import render from './render'
-// import {format} from 'date-fns'
+import taskDetails from './taskDetails'
 import loader from './loader'
 import './app.css';
 

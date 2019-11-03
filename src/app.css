@@ -114,17 +114,18 @@ button:hover{
 #active-title{
   background-color:#80e980;
   font-weight: bold;
-  /* border: 1px solid #80e980; */
+
   font-size: 20px;
   font-family: 'Times New Roman', Times, serif;
 }
 #active-description{
   background-color:#80e980;
-  /* border: 1px solid #80e980; */
+  margin-left: 12px;
+
 }
 #active-due-date{
   background-color:#80e980;
-  /* border: 1px solid #80e980; */
+
 }
 #active-priority{
   background-color:#80e980;
@@ -148,10 +149,3 @@ button:hover{
   background-color:#0d0c0e;
   cursor: pointer;
 }
-/* #up-arrow{
-
-} */
-
-/* #down-arrow{
-  border: 1px solid black;
-} */
